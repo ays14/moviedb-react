@@ -20,17 +20,15 @@ const Image = styled.img`
     max-width: 185px;
 `
 
+/**
+ * Card for one movie on the homepage
+ * Link to Movie Details page for a particular movie
+ * Returns null if the poster is not found
+ *
+ * @class MovieCard
+ * @props Component Properties
+ */
 class MovieCard extends React.Component {
-    // constructor(props) {
-    //     super(props);
-        // this.state = {
-        //     isLoading: false,
-        //     page: 1,
-        //     data: [],
-        // }
-        // this.handleScroll = this.handleScroll.bind(this);
-    // }
-
     render() {
         const imageURL = 'http://image.tmdb.org/t/p/w185';
 

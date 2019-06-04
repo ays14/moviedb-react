@@ -1,7 +1,7 @@
 import axios from 'axios';
+import { apiKey}  from '../config';
 
-const apiKey = "2556ac28d3c2f708dba5bb4bbb73cbe3";
-//https://api.themoviedb.org/3/authentication/token/validate_with_login?api_key=2556ac28d3c2f708dba5bb4bbb73cbe3
+// Create axios instance
 const Axios = axios.create({
     baseURL: "https://api.themoviedb.org/3",
     params: {
@@ -9,7 +9,21 @@ const Axios = axios.create({
     },
 });
 
+/**
+ * HTTP Service to make API calls for above set base URL
+ *
+ * @class HttpService
+ */
 class HttpService {
+    /**
+     * GET Method for HTTP Call
+     *
+     * @static
+     * @param {string} url API URL
+     * @param {object} params Parameters for request
+     * @returns Axios response object
+     * @memberof HttpService
+     */
     static get(url, params) {
         return Axios.get(url, {params});
     }

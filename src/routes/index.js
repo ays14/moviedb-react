@@ -4,6 +4,9 @@ import { HashRouter, Route, Switch } from 'react-router-dom';
 import Home from '../components/Home/';
 import Movie from '../components/Movie/';
 
+/**
+ * Create routes 
+ */
 export default () => (
   <HashRouter>
     <Switch>

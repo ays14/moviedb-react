@@ -10,38 +10,20 @@ const Header = styled.h1`
     padding-bottom: 10px;
 `
 
+/**
+ * Home component
+ * Renders other child components of the homepage
+ *
+ * @class Home
+ */
 class Home extends React.Component {
-    // constructor(props) {
-    //     super(props)
-    //     this.state = {
-    //         data: [],
-    //         isSearching: false,
-    //     }
-    // }
-
-    // componentWillMount() {
-    //     HttpService.get('/movie/popular', {language: 'en-US', page: 1}).then(response => {
-
-    //         this.setState({
-    //             data: response.data.results,
-    //         });
-    //         // console.log(this.state.data[0].title);
-    //     }).catch((err) => {
-    //         console.log(err.response);
-    //     });
-
-    // }
-
-
     render() {
         return (
             <div>
                 <Header>Movie Hunter</Header>
                 <SearchBar />
                 <Header>Popular Movies</Header>
-                <PopularMovies 
-                    // data={this.state.data}
-                />        
+                <PopularMovies />        
             </div>
         );
     }

@@ -41,7 +41,21 @@ const Video = styled.iframe`
     width: 100%;
 `;
 
+/**
+ * Renders the component for Movie Details
+ * Shows movie title, poster, synopsis and trailer a few more details
+ *
+ * @class Movie
+ * @props Component Properties
+ * @state Component State
+ */
 class Movie extends React.Component {
+    /**
+     * Creates an instance of Movie.
+     *
+     * @param {*} props
+     * @memberof Movie
+     */
     constructor(props) {
         super(props)
             this.state = {
@@ -50,20 +64,30 @@ class Movie extends React.Component {
         }
     }
     
+    /**
+     * Perfoms API call to get movie details
+     * Uses HTTP Service
+     * 
+     * @memberof Movie
+     */
     componentWillMount() {
-        const {match: {params: {movieId} } } = this.props; 
+        const {match: {params: {movieId} } } = this.props;
         HttpService.get(`/movie/${movieId}`, {language: 'en-US', append_to_response: 'videos'}).then(response => {
-            // console.log(response.data);
             this.setState({
                 data: response.data,
             });
-            // console.log(this.state.data[0].title);
         }).catch((err) => {
             console.log(err.response);
         });
 
     }
 
+    /**
+     * Checks whether trailer is found in JSON fetched from movie details
+     *
+     * @returns youtube key of trailer
+     * @memberof Movie
+     */
     getTrailer() {
         if (this.state.data.videos !== undefined) {
             const videos = this.state.data.videos.results.find((x) => {
@@ -82,7 +106,6 @@ class Movie extends React.Component {
     render() {
         const imageURL = 'http://image.tmdb.org/t/p/w200';
         const movie = this.state.data;      
-        console.log(movie);
         return (
             <Container>
                 <Head>

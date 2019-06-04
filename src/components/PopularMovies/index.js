@@ -10,7 +10,6 @@ const FlexContainer = styled.ul`
     flex-wrap: wrap;
     align-items: baseline;
     margin: 10px ;
-    /* justify-content: center; */
     align-content: center;
 `;
 
@@ -23,7 +22,20 @@ const Loader = styled.div`
     text-align: center;
 `;
 
+/**
+ * Renders and infinitely scrollable list
+ * Stores the data in state as an Array and calls MovieCard to show each movie
+ *
+ * @class PopularMovies
+ * @state Component State
+ */
 class PopularMovies extends React.Component {
+    /**
+     * Creates an instance of PopularMovies.
+     * 
+     * @param {*} props
+     * @memberof PopularMovies
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -34,27 +46,42 @@ class PopularMovies extends React.Component {
         }
     }
 
+    /**
+     * Calls the first set of data from API call
+     * Initializes the Intersection Observer to assist in infinite scroll
+     *
+     * @memberof PopularMovies
+     * @props Component Properties
+     */
     componentDidMount() {
         this.getMoreQueryResults();
-        // Options
+        
+        // Set options for observer
         var options = {
-            root: null, // Page as root
-            rootMargin: '0px',
-            threshold: 1.0
+            root: null, // Set page as root
+            rootMargin: '0px', 
+            threshold: 0.2
         };
-        // Create an observer
+
+        // Create an instance of Intersection Observer
         this.observer = new IntersectionObserver(
             this.handleObserver.bind(this), //callback
             options
         );
-        //Observ the `loadingRef`
+
+        // Observe the ref with value loadingRef
         this.observer.observe(this.loadingRef);
     }
     
-    handleObserver(entities, observer) {
+    /**
+     * Handle the observer's action or observation
+     *
+     * @param {array} entities
+     * @memberof PopularMovies
+     */
+    handleObserver(entities) {
         const y = entities[0].boundingClientRect.y;
         if (this.state.prev > y) {
-        //   const lastMovie = this.state.data[this.state.data.length - 1];
           const newPage = this.state.page + 1;
           this.setState({ page: newPage, isLoading: true });
           this.getMoreQueryResults();
@@ -62,6 +89,11 @@ class PopularMovies extends React.Component {
         this.setState({ prev: y });
     }
 
+    /**
+     * Fetch more movies via API call incrementing the page by one
+     * And add them to state
+     * @memberof PopularMovies
+     */
     getMoreQueryResults() {
         HttpService.get('/movie/popular', {language: 'en-US', page: this.state.page}).then(response => {
             const results = this.state.data;
@@ -69,7 +101,6 @@ class PopularMovies extends React.Component {
                 data: [...results, ...response.data.results],
                 isLoading: false,
             });
-            // console.log(this.state.data[0].title);
         }).catch((err) => {
             console.log(err.response);
         });
@@ -80,9 +111,8 @@ class PopularMovies extends React.Component {
             <Content>
                 <FlexContainer >
                     {this.state.data.map((value) => (
-                        <MovieCard data={value} />
+                        <MovieCard data={value} key={value.id}/>
                         ))}
-                    {/* {this.state.isLoading && <h1>Loading more movies</h1>} */}
                     <Loader ref={loadingRef => (this.loadingRef = loadingRef)} >
                         <h3>Loading...</h3>
                     </Loader>
