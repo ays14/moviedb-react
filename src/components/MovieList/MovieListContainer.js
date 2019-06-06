@@ -1,23 +1,11 @@
-import React from 'react';
+import React, {Fragment} from 'react';
 import styled from 'styled-components';
 
-import MovieCard from '../MovieCard/';
-import HttpService from '../../services/HttpService';
+import MovieList from './MovieList';
+import getMovieList from '../../helpers/getMovieListHelper';
+import Loader from '../../packages/Loader';
 
-const FlexContainer = styled.ul`
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: baseline;
-    margin: 10px ;
-    align-content: center;
-`;
-
-const Content = styled.div`
-    min-height: 900px;
-`;
-
-const Loader = styled.div`
+const LoaderWrapper = styled.div`
     display: block;
     text-align: center;
 `;
@@ -26,15 +14,14 @@ const Loader = styled.div`
  * Renders and infinitely scrollable list
  * Stores the data in state as an Array and calls MovieCard to show each movie
  *
- * @class PopularMovies
- * @state Component State
+ * @class MovieListContainer
  */
-class PopularMovies extends React.Component {
+class MovieListContainer extends React.Component {
     /**
      * Creates an instance of PopularMovies.
      * 
      * @param {*} props
-     * @memberof PopularMovies
+     * @memberof MovieListContainer
      */
     constructor(props) {
         super(props);
@@ -43,24 +30,24 @@ class PopularMovies extends React.Component {
             page: 1,
             data: [],
             prev: 0,
-        }
+        };
+        this.loadingRef = React.createRef();
     }
 
     /**
      * Calls the first set of data from API call
      * Initializes the Intersection Observer to assist in infinite scroll
      *
-     * @memberof PopularMovies
-     * @props Component Properties
+     * @memberof MovieListContainer
      */
     componentDidMount() {
-        this.getMoreQueryResults();
+        this.getQueryResults();
         
         // Set options for observer
-        var options = {
+        const options = {
             root: null, // Set page as root
             rootMargin: '0px', 
-            threshold: 0.2
+            threshold: 0,
         };
 
         // Create an instance of Intersection Observer
@@ -70,21 +57,21 @@ class PopularMovies extends React.Component {
         );
 
         // Observe the ref with value loadingRef
-        this.observer.observe(this.loadingRef);
+        this.observer.observe(this.loadingRef.current);
     }
     
     /**
      * Handle the observer's action or observation
      *
      * @param {array} entities
-     * @memberof PopularMovies
+     * @memberof MovieListContainer
      */
     handleObserver(entities) {
         const y = entities[0].boundingClientRect.y;
         if (this.state.prev > y) {
           const newPage = this.state.page + 1;
           this.setState({ page: newPage, isLoading: true });
-          this.getMoreQueryResults();
+          this.getQueryResults();
         }
         this.setState({ prev: y });
     }
@@ -92,34 +79,30 @@ class PopularMovies extends React.Component {
     /**
      * Fetch more movies via API call incrementing the page by one
      * And add them to state
-     * @memberof PopularMovies
+     * @memberof MovieListContainer
      */
-    getMoreQueryResults() {
-        HttpService.get('/movie/popular', {language: 'en-US', page: this.state.page}).then(response => {
-            const results = this.state.data;
+    getQueryResults() {
+        getMovieList(this.state.page)
+        .then((response) => {
+            const oldData = this.state.data;
             this.setState({
-                data: [...results, ...response.data.results],
+                data: [...oldData, ...response],
                 isLoading: false,
             });
-        }).catch((err) => {
-            console.log(err.response);
-        });
+        })
+        .catch((error) => console.log(error))
     }
 
     render() {
         return (
-            <Content>
-                <FlexContainer >
-                    {this.state.data.map((value) => (
-                        <MovieCard data={value} key={value.id}/>
-                        ))}
-                    <Loader ref={loadingRef => (this.loadingRef = loadingRef)} >
-                        <h3>Loading...</h3>
-                    </Loader>
-                </FlexContainer>
-            </Content>
+            <Fragment>
+                <MovieList data={this.state.data} />
+                <LoaderWrapper ref={this.loadingRef} >
+                    <Loader />
+                </LoaderWrapper>
+            </Fragment>
         )
     }
 }
 
-export default PopularMovies;
+export default MovieListContainer;
