@@ -1,5 +1,9 @@
 import HttpService from '../services/HttpService';
 
+const params = {
+    language: 'en-US',
+    append_to_response: 'videos'
+};
 /**
  * Fetch details of movie
  * 
@@ -7,16 +11,9 @@ import HttpService from '../services/HttpService';
  */
 const getMovie = (movieId) => {
     const url = `/movie/${movieId}`;
-    return new Promise((resolve, reject) => {
-        HttpService.get((url), {
-            language: 'en-US',
-            append_to_response: 'videos'
-        }).then(({data}) => {
-            resolve(data);
-        }).catch((err) => {
-            reject(err.response);
-        });
-    });
+    HttpService.get(url, params)
+    .then(({data}) => data)
+    .catch(err => Promise.reject(err.response));
 }
 
 export default getMovie;

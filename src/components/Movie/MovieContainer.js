@@ -40,8 +40,9 @@ class MovieContainer extends React.Component {
                 isLoading: true,
                 data: response,
                 videos: response.videos,
+            }, () => {
+                this.getTrailer();
             });
-            this.getTrailer();
         }).catch((err) => {
             console.log(err.response);
         });
@@ -74,17 +75,28 @@ class MovieContainer extends React.Component {
     }
 
     render() {
+        const {data :{
+            title,
+            tagline,
+            overview,
+            poster_path,
+            release_date,
+            vote_average,
+            vote_count
+        },
+            trailer
+        } = this.state;
         return (
             this.state.isLoading ? <Loader /> : (
                 <Movie 
-                    title={this.state.data.title}
-                    tagline={this.state.data.tagline}
-                    overview={this.state.data.overview}
-                    posterPath={this.state.data.poster_path}
-                    releaseDate={this.state.data.release_date}
-                    voteAverage={this.state.data.vote_average}
-                    voteCount={this.state.data.vote_count}
-                    trailer={this.state.trailer}
+                    title={title}
+                    tagline={tagline}
+                    overview={overview}
+                    posterPath={poster_path}
+                    releaseDate={release_date}
+                    voteAverage={vote_average}
+                    voteCount={vote_count}
+                    trailer={trailer}
                 />
             )
         )

@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-
 import MovieCard from '../MovieCard';
 
 const Container = styled.ul`
@@ -8,7 +7,7 @@ const Container = styled.ul`
     flex-direction: row;
     flex-wrap: wrap;
     align-items: baseline;
-    margin: 10px ;
+    margin: 12px ;
     align-content: center;
 `;
 

@@ -29,15 +29,9 @@ class HomeContainer extends Component {
      * @memberof HomeContainer
      */
     isUserSearching(value) {
-        if (value) {
-            this.setState({
-                isSearching: true,
-            });
-        } else {
-            this.setState({
-                isSearching: false,
-            });
-        }
+        this.setState({
+            isSearching: value,
+        });
     }
 
     render() {

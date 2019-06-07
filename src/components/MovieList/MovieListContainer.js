@@ -1,6 +1,5 @@
 import React, {Fragment} from 'react';
 import styled from 'styled-components';
-
 import MovieList from './MovieList';
 import getMovieList from '../../helpers/getMovieListHelper';
 import Loader from '../../packages/Loader';
@@ -26,7 +25,7 @@ class MovieListContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLoading: false,
+            isLoading: true,
             page: 1,
             data: [],
             prev: 0,
@@ -69,9 +68,14 @@ class MovieListContainer extends React.Component {
     handleObserver(entities) {
         const y = entities[0].boundingClientRect.y;
         if (this.state.prev > y) {
-          const newPage = this.state.page + 1;
-          this.setState({ page: newPage, isLoading: true });
-          this.getQueryResults();
+            this.setState((state) => {
+                return {
+                    page: state.page+1,
+                    isLoading: true
+                }   
+            }, () => {
+                this.getQueryResults();
+            })
         }
         this.setState({ prev: y });
     }
@@ -84,10 +88,11 @@ class MovieListContainer extends React.Component {
     getQueryResults() {
         getMovieList(this.state.page)
         .then((response) => {
-            const oldData = this.state.data;
-            this.setState({
-                data: [...oldData, ...response],
-                isLoading: false,
+            this.setState((state) => {
+                return {
+                    data: [...state.data, ...response],
+                    isLoading: false,
+                }
             });
         })
         .catch((error) => console.log(error))
@@ -96,6 +101,7 @@ class MovieListContainer extends React.Component {
     render() {
         return (
             <Fragment>
+                {this.state.isLoading && <Loader />}
                 <MovieList data={this.state.data} />
                 <LoaderWrapper ref={this.loadingRef} >
                     <Loader />

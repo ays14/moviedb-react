@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-
 import MovieCard from '../MovieCard';
 
 const Content = styled.div`
@@ -16,7 +15,8 @@ const SearchResults = styled.ul`
 	flex-direction: row;
 	flex-wrap: wrap;
 	align-items: baseline;
-	align-content: left;
+    margin: 12px;
+	align-content: center;
 `;
 
 const MessageDiv = styled.div`
