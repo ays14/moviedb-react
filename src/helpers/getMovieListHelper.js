@@ -10,11 +10,11 @@ const url = '/movie/popular';
 const getMovieList = (page) => {
     const params = {
         language: 'en-US',
-        page: page
+        page
     };
-    HttpService.get(url, params)
-    .then(({data: {results}}) => results)
-    .catch((err) => Promise.reject(err.response));
+    return HttpService.get(url, params)
+            .then(({data: {results}}) => results)
+            .catch((err) => Promise.reject(err.response));
 }
 
 export default getMovieList;

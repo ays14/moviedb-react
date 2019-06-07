@@ -11,9 +11,9 @@ const params = {
  */
 const getMovie = (movieId) => {
     const url = `/movie/${movieId}`;
-    HttpService.get(url, params)
-    .then(({data}) => data)
-    .catch(err => Promise.reject(err.response));
+    return HttpService.get(url, params)
+            .then(({data}) => data)
+            .catch(err => Promise.reject(err.response));
 }
 
 export default getMovie;
