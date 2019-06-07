@@ -4,9 +4,9 @@ import styled from 'styled-components';
 
 const MovieDetails = styled.li`
     display: inline-block;
-    align-self: center;
-    padding: 8px 2px 8px 2px;
-    margin-bottom: 16px;
+    justify-content: center;
+    padding: 12px 4px 12px 4px;
+    margin-bottom: 20px;
 `;
 
 const FlexCard = styled.div`
@@ -20,9 +20,8 @@ const Image = styled.img`
     max-width: 185px;
 `;
 
-const Text = styled.p`
-    font-size: 16x;
-    text-decoration: darkslategray;
+const Title = styled.p`
+    font-size: 16px;
 `;
 
 /**
@@ -43,7 +42,7 @@ const MovieCard = props => {
                         <Image 
                             src={`${imageURL}${posterPath}`} alt={title}>
                         </Image>
-                        <Text>{title}</Text>
+                        <Title>{title}</Title>
                     </FlexCard>        
                 </Link>
             </MovieDetails>
