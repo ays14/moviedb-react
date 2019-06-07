@@ -1,8 +1,9 @@
 import React, {Fragment} from 'react';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
 import MovieList from './MovieList';
-import getMovieList from '../../helpers/getMovieListHelper';
 import Loader from '../../packages/Loader';
+import { getMovieList, setScrollValue } from '../../store/movieList/action';
 
 const LoaderWrapper = styled.div`
     display: block;
@@ -19,44 +20,37 @@ class MovieListContainer extends React.Component {
     /**
      * Creates an instance of PopularMovies.
      * 
-     * @param {*} props
+     * @param {Object} props
      * @memberof MovieListContainer
      */
     constructor(props) {
         super(props);
-        this.state = {
-            isLoading: true,
-            page: 1,
-            data: [],
-            prev: 0,
-        };
         this.loadingRef = React.createRef();
     }
 
     /**
-     * Calls the first set of data from API call
+     * Calls the first set of data from API call in props
      * Initializes the Intersection Observer to assist in infinite scroll
      *
      * @memberof MovieListContainer
      */
     componentDidMount() {
-        this.getQueryResults();
-        
         // Set options for observer
         const options = {
             root: null, // Set page as root
             rootMargin: '0px', 
             threshold: 0,
         };
-
+        
         // Create an instance of Intersection Observer
         this.observer = new IntersectionObserver(
             this.handleObserver.bind(this), //callback
             options
-        );
-
-        // Observe the ref with value loadingRef
-        this.observer.observe(this.loadingRef.current);
+            );
+            
+        // Observe the ref with value loadingRef after getting data
+        this.props.getMovieList(this.props.page)
+        .then(() => this.observer.observe(this.loadingRef.current));
     }
     
     /**
@@ -67,42 +61,17 @@ class MovieListContainer extends React.Component {
      */
     handleObserver(entities) {
         const y = entities[0].boundingClientRect.y;
-        if (this.state.prev > y) {
-            this.setState((state) => {
-                return {
-                    page: state.page+1,
-                    isLoading: true
-                }   
-            }, () => {
-                this.getQueryResults();
-            })
+        if (this.props.prev > y) {
+            this.props.getMovieList(this.props.page);
         }
-        this.setState({ prev: y });
-    }
-
-    /**
-     * Fetch more movies via API call incrementing the page by one
-     * And add them to state
-     * @memberof MovieListContainer
-     */
-    getQueryResults() {
-        getMovieList(this.state.page)
-        .then((response) => {
-            this.setState((state) => {
-                return {
-                    data: [...state.data, ...response],
-                    isLoading: false,
-                }
-            });
-        })
-        .catch((error) => console.log(error))
+        this.props.setScrollValue(y);
     }
 
     render() {
         return (
             <Fragment>
-                {this.state.isLoading && <Loader />}
-                <MovieList data={this.state.data} />
+                {this.props.isLoading && <Loader />}
+                <MovieList data={this.props.data} />
                 <LoaderWrapper ref={this.loadingRef} >
                     <Loader />
                 </LoaderWrapper>
@@ -111,4 +80,16 @@ class MovieListContainer extends React.Component {
     }
 }
 
-export default MovieListContainer;
+const mapStateToProps = ({getMovieList: {isLoading, page, data, prev, error}}) => {
+    return {
+        isLoading,
+        page,
+        data,
+        prev,
+        error
+    }
+};
+
+const mapDispatchToProps = { getMovieList, setScrollValue };
+
+export default connect(mapStateToProps, mapDispatchToProps)(MovieListContainer);

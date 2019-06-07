@@ -7,12 +7,12 @@ const Container = styled.ul`
     flex-direction: row;
     flex-wrap: wrap;
     align-items: baseline;
-    margin: 12px ;
-    align-content: center;
+    padding: 16px;
 `;
 
 const Wrapper = styled.div`
     min-height: 900px;
+    padding: 20px;
 `;
 
 /**

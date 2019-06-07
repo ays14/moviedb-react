@@ -1,12 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-import Routes from './routes';
+import configStore from './store/configStore';
+import ConfigRoutes from './routes';
 import * as registerServiceWorker from './serviceWorker';
+
+// Define Store
+export const store = configStore();
 
 // Define app
 const App = (
-    <Routes />
+    <ConfigRoutes store={store}/>
 );
 
 ReactDOM.render(App, document.getElementById('root'));

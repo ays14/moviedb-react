@@ -1,10 +1,14 @@
 import React, {Fragment} from 'react';
-import _ from 'lodash';
+import { connect } from 'react-redux';
 import styled from 'styled-components';
-import {searchMovie, searchMoreResults} from '../../helpers/searchMovieHelper';
 import SearchQuery from './SearchQuery';
 import SearchResults from './SearchResults';
 import Loader from '../../packages/Loader';
+import {
+    searchMovie,
+    resetSearch,
+    setScrollValue
+} from '../../store/searchMovie/action';
 
 const LoaderWrapper = styled.div`
     text-align: center;
@@ -21,28 +25,17 @@ class SearchBarContainer extends React.Component {
 	/**
 	 * Creates an instance of SearchBar.
 	 * 
-	 * @param {*} props
+	 * @param {Object} props
 	 * @memberof SearchBarContainer
 	 */
 	constructor(props) {
         super(props);
         this.loadingRef = React.createRef();
-        this.initialState = {
-            isLoading: false,
-            results: [],
-            value: '',
-            page: 1,
-            listExhausted: false,
-            prev: 0,
-        };
-        this.state = this.initialState;
         this.handleSearchChange = this.handleSearchChange.bind(this);
-        this.getQueryResults = this.getQueryResults.bind(this);
 	}
 
     /**
-     * Invoked to set the Intersection Observer
-     * Also calls the first set of data from API
+     * Initializes options to set the Intersection Observer
      *
      * @memberof SearchBarContainer
      */
@@ -59,9 +52,6 @@ class SearchBarContainer extends React.Component {
             this.handleObserver.bind(this), //callback
             options
         );
-
-        // Observe the ref with value loadingRef
-        // this.observer.observe(this.loadingRef);
     }
     
     /**
@@ -72,18 +62,10 @@ class SearchBarContainer extends React.Component {
      */
     handleObserver(entities) {
         const y = entities[0].boundingClientRect.y;
-        if (this.state.prev > y && !this.state.listExhausted) {
-            this.setState((state) => {
-                return {
-                    page: state.page+1,
-                    isLoading: true
-                }
-            }, () => {
-                const { value, page } = this.state;
-                this.getMoreQueryResults(value, page);
-            });
+        if (this.props.prev > y && !this.props.listExhausted) {
+            this.props.searchMovie(this.props.value, this.props.page);
         }
-        this.setState({ prev: y });
+        this.props.setScrollValue(y);
     }
 
 
@@ -96,91 +78,30 @@ class SearchBarContainer extends React.Component {
     handleSearchChange(val) {
         if (val.length < 1) {
             this.props.onSearching(false);
-            return this.setState(this.initialState);
+            this.observer.disconnect();
+            return this.props.resetSearch();
         }
         this.props.onSearching(true);
-        this.getQueryResults(val);
+        this.props.searchMovie(val, this.props.page)
+        .then(() => this.observer.observe(this.loadingRef.current));
     }
     
-    /**
-     * Handles the first call to fetch the data
-     *
-     * @param {string} queryVal
-     * @memberof SearchBarContainer
-     */
-    getQueryResults(queryVal) {
-        searchMovie(queryVal)
-        .then(newData => {
-            const filteredData = this.regexpMatch(queryVal, newData);
-            this.setState({
-                isLoading: false,
-                results: filteredData,
-                value: queryVal,
-            });
-            this.observer.observe(this.loadingRef.current);
-        }).catch((err) => {
-            console.log(err.response);
-        });
-    }
-
-    /**
-     * Handles subsequent calls to fetch the data
-     *
-     * @param {string} queryVal
-     * @param {integer} page
-     * @memberof SearchBarContainer
-     */
-    getMoreQueryResults(queryVal, page) {
-        searchMoreResults(queryVal, page)
-        .then(newData => {
-            const filteredData = this.regexpMatch(queryVal, newData);
-            if(newData.length > 0) {
-                this.setState((state) => {
-                    return {
-                        isLoading: false,
-                        results: [...state.results, ...filteredData],
-                    }
-                });
-			} else {
-				this.setState({
-					isLoading: false,
-					listExhausted: true,
-                });
-            }
-        }).catch((err) => {
-            console.log(err.response);
-        });
-    }
-
-	/**
-	 * Performs reg exp match for search string in the results
-	 *
-	 * @memberof SearchBarContainer
-	 * @param {string} value value of search string
-	 * @param {string} data value of result of API call
-	 */
-	regexpMatch(value, data) {
-		const re = new RegExp(_.escapeRegExp(value), 'i');
-		const isMatch = (res) => re.test(res.title);
-		return _.filter(data, isMatch);
-	}
-
 	render() {
 		return (
 			<Fragment>
 				<SearchQuery
-					searchString={this.state.value}
+					searchString={this.props.value}
                     onSearchChange={this.handleSearchChange}   
 				/>
                 
-				{this.state.value && (
+				{this.props.value && (
                     <Fragment>
                         <SearchResults 
-                            results={this.state.results}
-                            loading={this.state.isLoading}
-                            exhausted={this.state.listExhausted}
+                            results={this.props.results}
+                            loading={this.props.isLoading}
+                            exhausted={this.props.listExhausted}
                         />
-                        {!this.state.listExhausted && (
+                        {!this.props.listExhausted && (
                             <LoaderWrapper ref={this.loadingRef} >
                                 <Loader />
                             </LoaderWrapper>
@@ -192,4 +113,18 @@ class SearchBarContainer extends React.Component {
 	}
 }
 
-export default SearchBarContainer;
+const mapStateToProps = ({searchMovie: {isLoading, page, results, prev, listExhausted, value, error}}) => {
+    return {
+        isLoading,
+        page,
+        results,
+        prev,
+        listExhausted,
+        value,
+        error
+    }
+};
+
+const mapDispatchToProps = { searchMovie, resetSearch, setScrollValue };
+
+export default connect(mapStateToProps, mapDispatchToProps)(SearchBarContainer);

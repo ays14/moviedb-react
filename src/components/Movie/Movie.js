@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
+    margin: 16px;
 `;
 
 const Container = styled.div`
@@ -58,8 +59,8 @@ const Content = styled.p`
 `;
 
 const Video = styled.iframe`
-    height: 90%;
-    width: 90%;
+    height: 22.5vw; /* This is to maintain aspect ratio of video even on window resize */
+    width: 40vw;
 `;
 
 const Image = styled.img`  
