@@ -41,7 +41,7 @@ const MovieCard = props => {
                 <Link to={`/movie/${id}`} key={id}>
                     <FlexCard>
                         <Image 
-                            src={imageURL+posterPath} alt={title}>
+                            src={`${imageURL}${posterPath}`} alt={title}>
                         </Image>
                         <Text>{title}</Text>
                     </FlexCard>        
