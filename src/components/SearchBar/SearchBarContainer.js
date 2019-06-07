@@ -1,9 +1,7 @@
 import React, {Fragment} from 'react';
 import _ from 'lodash';
 import styled from 'styled-components';
-
 import {searchMovie, searchMoreResults} from '../../helpers/searchMovieHelper';
-
 import SearchQuery from './SearchQuery';
 import SearchResults from './SearchResults';
 import Loader from '../../packages/Loader';
@@ -11,15 +9,6 @@ import Loader from '../../packages/Loader';
 const LoaderWrapper = styled.div`
     text-align: center;
 `;
-
-const initialState = {
-	isLoading: false,
-	results: [],
-	value: '',
-	page: 1,
-    listExhausted: false,
-    prev: 0,
-};
 
 /**
  * Renders the search bar and also the fetched results
@@ -38,7 +27,15 @@ class SearchBarContainer extends React.Component {
 	constructor(props) {
         super(props);
         this.loadingRef = React.createRef();
-        this.state = initialState;
+        this.initialState = {
+            isLoading: false,
+            results: [],
+            value: '',
+            page: 1,
+            listExhausted: false,
+            prev: 0,
+        };
+        this.state = this.initialState;
         this.handleSearchChange = this.handleSearchChange.bind(this);
         this.getQueryResults = this.getQueryResults.bind(this);
 	}
@@ -76,10 +73,15 @@ class SearchBarContainer extends React.Component {
     handleObserver(entities) {
         const y = entities[0].boundingClientRect.y;
         if (this.state.prev > y && !this.state.listExhausted) {
-          const newPage = this.state.page + 1;
-          this.setState({ page: newPage, isLoading: true });
-          const { value } = this.state;
-          this.getMoreQueryResults(value, newPage);
+            this.setState((state) => {
+                return {
+                    page: state.page+1,
+                    isLoading: true
+                }
+            }, () => {
+                const { value, page } = this.state;
+                this.getMoreQueryResults(value, page);
+            });
         }
         this.setState({ prev: y });
     }
@@ -94,7 +96,7 @@ class SearchBarContainer extends React.Component {
     handleSearchChange(val) {
         if (val.length < 1) {
             this.props.onSearching(false);
-            return this.setState(initialState);
+            return this.setState(this.initialState);
         }
         this.props.onSearching(true);
         this.getQueryResults(val);
@@ -131,12 +133,13 @@ class SearchBarContainer extends React.Component {
     getMoreQueryResults(queryVal, page) {
         searchMoreResults(queryVal, page)
         .then(newData => {
-            const oldData = this.state.results;
             const filteredData = this.regexpMatch(queryVal, newData);
             if(newData.length > 0) {
-                this.setState({
-                    isLoading: false,
-                    results: [...oldData, ...filteredData],
+                this.setState((state) => {
+                    return {
+                        isLoading: false,
+                        results: [...state.results, ...filteredData],
+                    }
                 });
 			} else {
 				this.setState({

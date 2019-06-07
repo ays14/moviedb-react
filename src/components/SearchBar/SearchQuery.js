@@ -13,7 +13,7 @@ const InputForm = styled.form`
 const Input = styled.input`
 	text-align: center;
 	width: 40%;
-	height: 35px;
+	height: 36px;
 `;
 
 /**
@@ -30,6 +30,7 @@ class SearchQuery extends React.Component {
             searchString: ''
         };
         this.handleInputChange = this.handleInputChange.bind(this);
+        this.delayed = _.debounce(this.props.onSearchChange, 800);
     }
 
 	/**
@@ -37,13 +38,15 @@ class SearchQuery extends React.Component {
      *
      * @memberof SearchQuery
      */
-    handleInputChange(e) {
-		const value = e.target.value;
+    handleInputChange(event) {
+        event.persist()
+		const value = event.target.value;
 		this.setState({ 
 			searchString: value
         });
-        this.props.onSearchChange(value);
-	}
+        this.delayed(value);
+        // this.props.onSearchChange(value);
+    }
 
 	render() {
 		return (
@@ -52,10 +55,8 @@ class SearchQuery extends React.Component {
                     <Input
                         placeholder="Search for movie..."
                         value={this.state.searchString}
-                        onChange={_.debounce(this.handleInputChange, 1000, {
-                            leading: true,
-                            maxWait: 1500,
-                        })} />
+                        onChange={this.handleInputChange}
+                    />
                 </InputForm>
             </Wrapper>
 		)

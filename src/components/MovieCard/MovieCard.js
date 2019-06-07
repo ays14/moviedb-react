@@ -6,7 +6,7 @@ const MovieDetails = styled.li`
     display: inline-block;
     align-self: center;
     padding: 8px 2px 8px 2px;
-    margin-bottom: 15px;
+    margin-bottom: 16px;
 `;
 
 const FlexCard = styled.div`
@@ -21,7 +21,7 @@ const Image = styled.img`
 `;
 
 const Text = styled.p`
-    font-size: 14px;
+    font-size: 16x;
     text-decoration: darkslategray;
 `;
 

@@ -8,16 +8,13 @@ const url = '/movie/popular';
  * @param {integer} page page for movie list to fetch
  */
 const getMovieList = (page) => {
-    return new Promise((resolve, reject) => {
-        HttpService.get(url, {
-            language: 'en-US',
-            page: page
-        }).then(({data: {results}}) => {
-            resolve(results);
-        }).catch((err) => {
-            reject(err.response);
-        });
-    });
+    const params = {
+        language: 'en-US',
+        page: page
+    };
+    HttpService.get(url, params)
+    .then(({data: {results}}) => results)
+    .catch((err) => Promise.reject(err.response));
 }
 
 export default getMovieList;

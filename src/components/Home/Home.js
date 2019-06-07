@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 const Header = styled.h1`
     text-align: center;
-    border-bottom: 0.5px solid black;
-    padding-bottom: 10px;
+    border-bottom: 0.8px solid black;
+    padding-bottom: 12px;
 `
 
 /**

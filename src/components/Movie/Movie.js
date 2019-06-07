@@ -8,14 +8,14 @@ const Wrapper = styled.div`
 const Container = styled.div`
     display: flex;
     column-count: 2;
-    column-gap: 5px;
+    column-gap: 4px;
 `;
 
 const Head = styled.h1`
     display: block;
     align-content: center;
     text-align: center;
-    margin-block-end: 30px;
+    margin-bottom: 32px;
 `;
 
 const Card = styled.div`
@@ -92,7 +92,7 @@ const Movie = props => {
                 </Head>
                 <Container>
                     <Card>
-                        <Image src={imageURL+posterPath} alt='loading' />
+                        <Image src={`${imageURL}${posterPath}`} alt='loading' />
                         <Title>
                             {title}
                         </Title>
@@ -108,7 +108,7 @@ const Movie = props => {
                             <Content>Rated {voteAverage} by {voteCount} votes</Content>
                         )}
                         {trailer ? (
-                            <Video src={videoURL+trailer}>
+                            <Video src={`${videoURL}${trailer}`}>
                                 Trailer
                             </Video>
                         ) : (
