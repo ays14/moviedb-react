@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "1029e4d430b9da6bd68023636226c920",
+    "revision": "539d5c49b35106b5eceb7ca7b1576fcd",
     "url": "/moviedb-react/index.html"
   },
   {
@@ -8,8 +8,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/moviedb-react/static/js/2.f12adb76.chunk.js"
   },
   {
-    "revision": "48f496f23d731e60a451",
-    "url": "/moviedb-react/static/js/main.6a634552.chunk.js"
+    "revision": "d58c776559294e20461b",
+    "url": "/moviedb-react/static/js/main.a84cca31.chunk.js"
   },
   {
     "revision": "3097c18ce8440f1fdca5",
