@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.js": "/moviedb-react/static/js/main.b164949b.chunk.js",
-    "main.js.map": "/moviedb-react/static/js/main.b164949b.chunk.js.map",
+    "main.js": "/moviedb-react/static/js/main.a0454a39.chunk.js",
+    "main.js.map": "/moviedb-react/static/js/main.a0454a39.chunk.js.map",
     "runtime~main.js": "/moviedb-react/static/js/runtime~main.db341e92.js",
     "runtime~main.js.map": "/moviedb-react/static/js/runtime~main.db341e92.js.map",
     "static/js/2.0f4e93e7.chunk.js": "/moviedb-react/static/js/2.0f4e93e7.chunk.js",
     "static/js/2.0f4e93e7.chunk.js.map": "/moviedb-react/static/js/2.0f4e93e7.chunk.js.map",
     "index.html": "/moviedb-react/index.html",
-    "precache-manifest.13bd70d96869e4e04d51fd178142ded5.js": "/moviedb-react/precache-manifest.13bd70d96869e4e04d51fd178142ded5.js",
+    "precache-manifest.7b4844722f9ca6eeaf98fe3071fc783b.js": "/moviedb-react/precache-manifest.7b4844722f9ca6eeaf98fe3071fc783b.js",
     "service-worker.js": "/moviedb-react/service-worker.js"
   }
 }
