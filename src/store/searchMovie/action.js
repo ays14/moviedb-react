@@ -2,7 +2,6 @@ import {
     SEARCH_MOVIE_SUCCESS,
     SEARCH_MOVIE_ERROR,
     REQUEST_MOVIE_SEARCH,
-    RESET_SEARCH_BAR,
     REQUEST_MORE_SEARCH_RESULTS,
     GET_MOVIE_LIST_SUCCESS,
     GET_MOVIE_LIST_ERROR,
@@ -77,22 +76,6 @@ const searchMovie = (value, page) => {
 };
 
 /**
- * Invoked to reset the search bar
- * 
- * @returns {Object} Action
- */
-const resetSearchBar = () => ({type: RESET_SEARCH_BAR})
-
-/**
- * Action creator to reset the search bar
- * 
- * @return {function} 
- */
-const resetSearch = () => {
-    return dispatch => dispatch(resetSearchBar());
-}
-
-/**
  * Invoked if movie list is requested from API
  * 
  * @returns {Object} Action
@@ -152,6 +135,5 @@ const getMovieList = (page) => {
 
 export {
     searchMovie,
-    resetSearch,
     getMovieList
 };

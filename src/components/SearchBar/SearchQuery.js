@@ -24,10 +24,16 @@ const Input = styled.input`
  * @props Component Properties
  */
 class SearchQuery extends React.Component {
+    /**
+     * Creates an instance of SearchBar.
+     *
+     * @param {Object} props
+     * @memberof SearchQuery
+     */
     constructor(props) {
         super(props);
         this.state = {
-            searchString: ""
+            searchString: ''
         };
         this.handleInputChange = this.handleInputChange.bind(this);
         this.delayed = _.debounce(this.props.onSearchChange, 600);

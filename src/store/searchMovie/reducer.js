@@ -2,7 +2,6 @@ import {
     SEARCH_MOVIE_SUCCESS,
     SEARCH_MOVIE_ERROR,
     REQUEST_MOVIE_SEARCH,
-    RESET_SEARCH_BAR,
     REQUEST_MORE_SEARCH_RESULTS,
     GET_MOVIE_LIST_SUCCESS,
     GET_MOVIE_LIST_ERROR,
@@ -42,14 +41,12 @@ const searchMovie = (state = initialState, action) => {
                     error: action.payload.error,
                     page: action.page
                 };
-        case RESET_SEARCH_BAR:
-            return initialState;
         case REQUEST_MOVIE_LIST:
             return { ...initialState, isLoading: true, list: action.page};
         case REQUEST_MORE_MOVIES:
             return {...state, isLoading: true};
         case GET_MOVIE_LIST_SUCCESS:
-            return { ...state,
+            return { ...initialState,
                     isLoading: false,
                     results: [...state.results, ...action.payload],
                     list: action.page,
