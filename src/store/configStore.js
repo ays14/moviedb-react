@@ -3,8 +3,7 @@ import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
 import { routerReducer } from 'react-router-redux';
 import getMovieDetails from './movieDetails/reducer';
-import getMovieList from './movieList/reducer';
-import searchMovie from './searchMovie/reducer';
+import movie from './searchMovie/reducer';
 
 const middlewareList =  applyMiddleware(thunk, createLogger());
 
@@ -12,8 +11,8 @@ const middlewareList =  applyMiddleware(thunk, createLogger());
 const appReducer = combineReducers({
     router: routerReducer,
     getMovieDetails,
-    getMovieList,
-    searchMovie
+    // getMovieList,
+    movie
 });
 
 /**

@@ -7,6 +7,7 @@ import Loader from '../../packages/Loader';
 import {
     searchMovie,
     resetSearch,
+    getMovieList,
     setScrollValue
 } from '../../store/searchMovie/action';
 
@@ -52,7 +53,16 @@ class SearchBarContainer extends React.Component {
             this.handleObserver.bind(this), //callback
             options
         );
+
+        this.props.getMovieList(this.props.list)
+        .then(() => this.observer.observe(this.loadingRef.current));
     }
+
+    componentWillUnmount () {
+        this.props.resetSearch();
+        this.observer.disconnect();
+    }
+    
     
     /**
      * Handle the observer's action or observation
@@ -63,7 +73,11 @@ class SearchBarContainer extends React.Component {
     handleObserver(entities) {
         const y = entities[0].boundingClientRect.y;
         if (this.props.prev > y && !this.props.listExhausted) {
-            this.props.searchMovie(this.props.value, this.props.page);
+            if (this.props.value) {
+                this.props.searchMovie(this.props.value, this.props.page);
+            } else {
+                this.props.getMovieList(this.props.list);
+            }
         }
         this.props.setScrollValue(y);
     }
@@ -77,13 +91,12 @@ class SearchBarContainer extends React.Component {
      */
     handleSearchChange(val) {
         if (val.length < 1) {
-            this.props.onSearching(false);
-            this.observer.disconnect();
-            return this.props.resetSearch();
+            this.props.resetSearch();
+            this.props.getMovieList(this.props.list);
+        } else {
+            this.props.searchMovie(val, this.props.page)
+            .then(() => this.observer.observe(this.loadingRef.current));
         }
-        this.props.onSearching(true);
-        this.props.searchMovie(val, this.props.page)
-        .then(() => this.observer.observe(this.loadingRef.current));
     }
     
 	render() {
@@ -94,7 +107,7 @@ class SearchBarContainer extends React.Component {
                     onSearchChange={this.handleSearchChange}   
 				/>
                 
-				{this.props.value && (
+				{/* {this.props.value && ( */}
                     <Fragment>
                         <SearchResults 
                             results={this.props.results}
@@ -107,16 +120,17 @@ class SearchBarContainer extends React.Component {
                             </LoaderWrapper>
                         )}
                     </Fragment>
-                )}
+                {/* )} */}
 			</Fragment>
 		)
 	}
 }
 
-const mapStateToProps = ({searchMovie: {isLoading, page, results, prev, listExhausted, value, error}}) => {
+const mapStateToProps = ({movie: {isLoading, page, list, results, prev, listExhausted, value, error}}) => {
     return {
         isLoading,
         page,
+        list,
         results,
         prev,
         listExhausted,
@@ -125,6 +139,6 @@ const mapStateToProps = ({searchMovie: {isLoading, page, results, prev, listExha
     }
 };
 
-const mapDispatchToProps = { searchMovie, resetSearch, setScrollValue };
+const mapDispatchToProps = { searchMovie, resetSearch, getMovieList, setScrollValue };
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchBarContainer);

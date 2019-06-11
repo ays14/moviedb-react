@@ -30,7 +30,7 @@ class SearchQuery extends React.Component {
             searchString: ''
         };
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.delayed = _.debounce(this.props.onSearchChange, 800);
+        this.delayed = _.debounce(this.props.onSearchChange, 300);
     }
 
 	/**
