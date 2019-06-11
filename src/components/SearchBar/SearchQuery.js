@@ -1,19 +1,19 @@
-import React from 'react';
-import _ from 'lodash';
-import styled from 'styled-components';
+import React from "react";
+import _ from "lodash";
+import styled from "styled-components";
 
 const Wrapper = styled.div`
     align-content: center;
     text-align: center;
 `;
 const InputForm = styled.form`
-	background-color: lightgray;
+    background-color: lightgray;
 `;
 
 const Input = styled.input`
-	text-align: center;
-	width: 40%;
-	height: 36px;
+    text-align: center;
+    width: 40%;
+    height: 36px;
 `;
 
 /**
@@ -27,29 +27,27 @@ class SearchQuery extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            searchString: ''
+            searchString: ""
         };
         this.handleInputChange = this.handleInputChange.bind(this);
-        this.delayed = _.debounce(this.props.onSearchChange, 300);
+        this.delayed = _.debounce(this.props.onSearchChange, 600);
     }
 
-	/**
+    /**
      * Handle the change in input
      *
      * @memberof SearchQuery
      */
     handleInputChange(event) {
-        event.persist()
-		const value = event.target.value;
-		this.setState({ 
-			searchString: value
+        const value = event.target.value;
+        this.setState({
+            searchString: value
         });
         this.delayed(value);
-        // this.props.onSearchChange(value);
     }
 
-	render() {
-		return (
+    render() {
+        return (
             <Wrapper>
                 <InputForm onSubmit={event => event.preventDefault()}>
                     <Input
@@ -59,8 +57,8 @@ class SearchQuery extends React.Component {
                     />
                 </InputForm>
             </Wrapper>
-		)
-	}
+        );
+    }
 }
 
 export default SearchQuery;

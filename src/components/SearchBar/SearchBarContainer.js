@@ -1,19 +1,13 @@
-import React, {Fragment} from 'react';
+import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components';
+import { forEach } from 'lodash';
 import SearchQuery from './SearchQuery';
 import SearchResults from './SearchResults';
-import Loader from '../../packages/Loader';
 import {
     searchMovie,
     resetSearch,
-    getMovieList,
-    setScrollValue
+    getMovieList
 } from '../../store/searchMovie/action';
-
-const LoaderWrapper = styled.div`
-    text-align: center;
-`;
 
 /**
  * Renders the search bar and also the fetched results
@@ -23,17 +17,21 @@ const LoaderWrapper = styled.div`
  * @props Component Properties
  */
 class SearchBarContainer extends React.Component {
-	/**
-	 * Creates an instance of SearchBar.
-	 * 
-	 * @param {Object} props
-	 * @memberof SearchBarContainer
-	 */
-	constructor(props) {
+    /**
+     * Creates an instance of SearchBar.
+     *
+     * @param {Object} props
+     * @memberof SearchBarContainer
+     */
+    constructor(props) {
         super(props);
+        this.state = {
+            value: ''
+        };
         this.loadingRef = React.createRef();
+        this.setObserver = this.setObserver.bind(this);
         this.handleSearchChange = this.handleSearchChange.bind(this);
-	}
+    }
 
     /**
      * Initializes options to set the Intersection Observer
@@ -44,8 +42,7 @@ class SearchBarContainer extends React.Component {
         // Set options for observer
         const options = {
             root: null, // Set page as root
-            rootMargin: '0px', 
-            threshold: 0,
+            threshold: 1
         };
 
         // Create an instance of Intersection Observer
@@ -54,16 +51,20 @@ class SearchBarContainer extends React.Component {
             options
         );
 
-        this.props.getMovieList(this.props.list)
-        .then(() => this.observer.observe(this.loadingRef.current));
+        this.props.getMovieList(this.props.list);
     }
 
-    componentWillUnmount () {
+
+    /**
+     * Disconnects the observer on unmount and does a search reset
+     *
+     * @memberof SearchBarContainer
+     */
+    componentWillUnmount() {
         this.props.resetSearch();
         this.observer.disconnect();
     }
-    
-    
+
     /**
      * Handle the observer's action or observation
      *
@@ -71,27 +72,23 @@ class SearchBarContainer extends React.Component {
      * @memberof SearchBarContainer
      */
     handleObserver(entities) {
-        const y = entities[0].boundingClientRect.y;
         const {
-            value,
-            prev,
-            listExhausted,
             page,
             list,
             searchMovie,
             getMovieList,
-            setScrollValue
         } = this.props;
-        if (prev > y && !listExhausted) {
-            if (value) {
-                searchMovie(value, page);
-            } else {
-                getMovieList(list);
+        const { value } = this.state;
+        forEach(entities, item => {
+            if (item.isIntersecting && item.intersectionRatio === 1) {
+                if (value) {
+                    searchMovie(value, page+1);
+                } else {
+                    getMovieList(list+1);
+                }
             }
-        }
-        setScrollValue(y);
+        });
     }
-
 
     /**
      * Handle the search value change
@@ -100,6 +97,7 @@ class SearchBarContainer extends React.Component {
      * @memberof SearchBarContainer
      */
     handleSearchChange(val) {
+        this.setState({ value: val });
         const {
             list,
             page,
@@ -108,66 +106,56 @@ class SearchBarContainer extends React.Component {
             searchMovie
         } = this.props;
         if (val.length < 1) {
+            console.log('reset\n', val)
             resetSearch();
             getMovieList(list);
         } else {
-            searchMovie(val, page)
-            .then(() => this.observer.observe(this.loadingRef.current));
+            searchMovie(val, page);
         }
     }
-    
-	render() {
-        const {
-            value,
-            results,
-            isLoading,
-            listExhausted
-        } = this.props;
-		return (
-			<Fragment>
-				<SearchQuery
-					searchString={value}
-                    onSearchChange={this.handleSearchChange}   
+
+    setObserver(target) {
+        this.observer.observe(target);
+    }
+
+    render() {
+        const { results, isLoading, page, totalPages } = this.props;
+        return (
+            <Fragment>
+                <SearchQuery
+                    searchString={this.state.value}
+                    onSearchChange={this.handleSearchChange}
                 />
-                <SearchResults 
+                <SearchResults
+                    observer={this.setObserver}
                     results={results}
                     loading={isLoading}
-                    exhausted={listExhausted}
+                    page={page}
+                    totalPages={totalPages}
                 />
-                {!listExhausted && (
-                    <LoaderWrapper ref={this.loadingRef} >
-                        <Loader />
-                    </LoaderWrapper>
-                )}
             </Fragment>
-		)
-	}
+        );
+    }
 }
 
 const mapStateToProps = ({
-        movie: {
-            isLoading,
-            page,
-            list,
-            results,
-            prev,
-            listExhausted,
-            value,
-            error
-        }
-    }) => {
-    return {
-        isLoading,
-        page,
-        list,
-        results,
-        prev,
-        listExhausted,
-        value,
-        error
-    }
+    movie: { isLoading, page, list, results, totalPages, error }
+}) => ({
+    isLoading,
+    page,
+    list,
+    results,
+    error,
+    totalPages
+});
+
+const mapDispatchToProps = {
+    searchMovie,
+    resetSearch,
+    getMovieList,
 };
 
-const mapDispatchToProps = { searchMovie, resetSearch, getMovieList, setScrollValue };
-
-export default connect(mapStateToProps, mapDispatchToProps)(SearchBarContainer);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(SearchBarContainer);

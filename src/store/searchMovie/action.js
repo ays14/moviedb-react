@@ -4,12 +4,10 @@ import {
     REQUEST_MOVIE_SEARCH,
     RESET_SEARCH_BAR,
     REQUEST_MORE_SEARCH_RESULTS,
-    NO_MORE_RESULTS,
     GET_MOVIE_LIST_SUCCESS,
     GET_MOVIE_LIST_ERROR,
     REQUEST_MOVIE_LIST,
     REQUEST_MORE_MOVIES,
-    SET_SCROLLER_VALUE
 } from './constants';
 import _searchMovie from '../../helpers/searchMovie';
 import _getMovieList from '../../helpers/getMovieList';
@@ -36,10 +34,11 @@ const reqMoreResults = () => ({ type: REQUEST_MORE_SEARCH_RESULTS});
  * @param {integer} trailerKey id for the trailer on youtube
  * @returns {Object} Action
  */
-const searchMovieSuccess = (response, page) => ({
+const searchMovieSuccess = (response, page, totalPages) => ({
     type: SEARCH_MOVIE_SUCCESS,
     payload: response,
-    page: page+1
+    page,
+    totalPages
 });
 
 /**
@@ -56,13 +55,6 @@ const searchMovieError = (error, page) => ({
 });
 
 /**
- * Invoked if no more search movie results are fetched from API
- * 
- * @returns {Object} Action
- */
-const noMoreResults = () => ({type: NO_MORE_RESULTS});
-
-/**
  * Action creator to get the search movies
  * 
  * @param {integer} value search string
@@ -75,14 +67,12 @@ const searchMovie = (value, page) => {
         else dispatch(reqMoreResults());
         return _searchMovie(value, page)
             .then((response) => {
-                if (response.length > 0) {
-                    const filtered = regexpFilter(value, response);
-                    dispatch(searchMovieSuccess(filtered, page))
-                } else {
-                    dispatch(noMoreResults())
+                if (page <= response.total_pages) {
+                    const filtered = regexpFilter(value, response.results);
+                    dispatch(searchMovieSuccess(filtered, page, response.total_pages));
                 }
             })
-            .catch(error => dispatch(searchMovieError(error, page)))
+            .catch(error => dispatch(searchMovieError(error, page)));
     };
 };
 
@@ -126,7 +116,7 @@ const reqMoreMovies = () => ({type: REQUEST_MORE_MOVIES});
 const getMovieListSuccess = (response, page) => ({
     type: GET_MOVIE_LIST_SUCCESS,
     payload: response,
-    page: page+1
+    page
 });
 
 /**
@@ -160,27 +150,8 @@ const getMovieList = (page) => {
     };
 };
 
-/**
- * Invoked to set the scroller value
- * 
- * @param {integer} scroller integer value of scroll
- * @returns {Object} Action
- */
-const setScroller = (scroller) => ({type: SET_SCROLLER_VALUE, scroll: scroller});
-
-/**
- * Action creator to set the scroller value
- * 
- * @param {integer} scroller scroll value
- * @return {function} 
- */
-const setScrollValue = (scroller) => {
-    return (dispatch) => dispatch(setScroller(scroller));
-};
-
 export {
     searchMovie,
     resetSearch,
-    getMovieList,
-    setScrollValue
+    getMovieList
 };
