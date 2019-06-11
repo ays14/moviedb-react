@@ -5,7 +5,6 @@ import SearchQuery from './SearchQuery';
 import SearchResults from './SearchResults';
 import {
     searchMovie,
-    resetSearch,
     getMovieList
 } from '../../store/searchMovie/action';
 
@@ -61,7 +60,6 @@ class SearchBarContainer extends React.Component {
      * @memberof SearchBarContainer
      */
     componentWillUnmount() {
-        this.props.resetSearch();
         this.observer.disconnect();
     }
 
@@ -101,21 +99,29 @@ class SearchBarContainer extends React.Component {
         const {
             list,
             page,
-            resetSearch,
             getMovieList,
             searchMovie
         } = this.props;
         if (val.length < 1) {
-            console.log('reset\n', val)
-            resetSearch();
             getMovieList(list);
         } else {
             searchMovie(val, page);
         }
     }
 
+
+    /**
+     * Set the observer for intersection
+     *
+     * @param {*} target
+     * @memberof SearchBarContainer
+     */
     setObserver(target) {
-        this.observer.observe(target);
+        if (target) {
+            this.observer.observe(target);
+        } else {
+            this.observer.disconnect();
+        }
     }
 
     render() {
@@ -151,7 +157,6 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = {
     searchMovie,
-    resetSearch,
     getMovieList,
 };
 
