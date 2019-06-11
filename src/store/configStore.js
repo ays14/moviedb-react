@@ -11,7 +11,6 @@ const middlewareList =  applyMiddleware(thunk, createLogger());
 const appReducer = combineReducers({
     router: routerReducer,
     getMovieDetails,
-    // getMovieList,
     movie
 });
 
