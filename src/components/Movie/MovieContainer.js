@@ -1,8 +1,8 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import Movie from './Movie';
-import Loader from '../../packages/Loader';
-import getMovieDetails from '../../store/movieDetails/action';
+import React from "react";
+import { connect } from "react-redux";
+import Movie from "./Movie";
+import Loader from "../../packages/Loader";
+import getMovieDetails from "../../store/movieDetails/action";
 
 /**
  * Renders the component for Movie Details
@@ -14,19 +14,19 @@ import getMovieDetails from '../../store/movieDetails/action';
 class MovieContainer extends React.Component {
     /**
      * Perfoms call to get movie details
-     * 
+     *
      * @memberof MovieContainer
      */
     componentWillMount() {
-        const {match: {params: {movieId} } } = this.props;
-        this.props.getMovieDetails(movieId);
+        this.props.getMovieDetails(this.props.match.params.movieId);
     }
 
     render() {
         if (this.props.isLoading) {
-            return <Loader />
-        } else {
-            const {data :{
+            return <Loader />;
+        }
+        const {
+            data: {
                 title,
                 tagline,
                 overview,
@@ -35,35 +35,35 @@ class MovieContainer extends React.Component {
                 vote_average,
                 vote_count
             },
-                trailer
-            } = this.props;
-            return (
-                this.props.isLoading ? <Loader /> : (
-                    <Movie 
-                        title={title}
-                        tagline={tagline}
-                        overview={overview}
-                        posterPath={poster_path}
-                        releaseDate={release_date}
-                        voteAverage={vote_average}
-                        voteCount={vote_count}
-                        trailer={trailer}
-                    />
-                )
-            )
-        }
+            trailer
+        } = this.props;
+        return (
+            <Movie
+                title={title}
+                tagline={tagline}
+                overview={overview}
+                posterPath={poster_path}
+                releaseDate={release_date}
+                voteAverage={vote_average}
+                voteCount={vote_count}
+                trailer={trailer}
+            />
+        );
     }
 }
 
-const mapStateToProps = ({getMovieDetails: {data, trailer, isLoading, error}}) => {
-    return {
-        data,
-        trailer,
-        isLoading,
-        error
-    };
-};
+const mapStateToProps = ({
+    getMovieDetails: { data, trailer, isLoading, error }
+}) => ({
+    data,
+    trailer,
+    isLoading,
+    error
+});
 
 const mapDispatchToProps = { getMovieDetails };
 
-export default connect(mapStateToProps, mapDispatchToProps)(MovieContainer);
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(MovieContainer);

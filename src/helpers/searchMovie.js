@@ -15,7 +15,7 @@ const searchMovie = (value, page) => {
         query: value,
     };
     return HttpService.get(url, params)
-            .then(({data: {results}}) => results)
+            .then(({data}) => data)
             .catch((err) => Promise.reject(err.response));
 }
 

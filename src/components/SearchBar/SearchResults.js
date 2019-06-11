@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import MovieCard from './MovieCard';
+import Loader from '../../packages/Loader';
 
 const Content = styled.div`
 	text-align: center;
@@ -26,38 +27,58 @@ const MessageDiv = styled.div`
 
 const Message = styled.p`
     text-align: center;
-	font-size: 20px;
+    font-size: 20px;
 `;
 
 /**
  * Renders the fetched results of the search
  *
- * @param {object} props props passed from parent component
+ * @class SearchBarResults
+ * @props Component Properties
  */
-const SearchBarResults = props => {
-    return (
-        <Content>
-            <SearchResultsDiv>
-                <SearchResults>
-                    {props.results.map((value) => (
-                        <MovieCard 
-                            posterPath={value.poster_path} 
+class SearchBarResults extends React.Component {
+    constructor (props) {
+        super(props);
+        this.loadingRef = null;
+    }
+
+    componentDidUpdate(prevProps) {
+        const count = this.props.results.length;
+        if (count > 0 && !this.props.loading) {
+            const intersectionTarget = Math.round(count/10);
+            const observerTarget = this.loadingRef.querySelector(
+                `li:nth-child(${count - intersectionTarget})`
+            );
+            this.props.observer(observerTarget);
+        }
+    }
+    
+    render() {
+        return (
+            <Content>
+                <SearchResultsDiv>
+                    <SearchResults
+                        ref={elem => (this.loadingRef = elem)}
+                        >
+                        {this.props.results.map(value => (
+                            <MovieCard
+                            posterPath={value.poster_path}
                             title={value.title}
                             id={value.id}
                             key={value.id}
-                        />
-                    ))}
-                </SearchResults>  
-            </SearchResultsDiv>
-            <MessageDiv>
-                {props.exhausted && (
-                        <Message>
-                            No search results to show
-                        </Message>					
-                )}
-            </MessageDiv>
-        </Content>
-    )
+                            />
+                            ))}
+                    </SearchResults>
+                </SearchResultsDiv>
+                {this.props.loading && <Loader />}
+                <MessageDiv>
+                    {(this.props.page === this.props.totalPages) && this.props.results.length > 0 && (
+                        <Message>No search results to show</Message>
+                    )}
+                </MessageDiv>
+            </Content>
+        );
+    }
 }
 
 export default SearchBarResults;

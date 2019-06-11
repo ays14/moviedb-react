@@ -13,12 +13,6 @@ const REQUEST_MORE_SEARCH_RESULTS = 'REQUEST_MORE_SEARCH_RESULTS';
 // Reset the value and state of search bar constant
 const RESET_SEARCH_BAR = 'RESET_SEARCH_BAR';
 
-// Set scroller value constant
-const SET_SCROLLER_VALUE = 'SET_SCROLLER_VALUE';
-
-// No more search results from the API constant
-const NO_MORE_RESULTS = 'NO_MORE_RESULTS';
-
 // Request popular movies from API constant
 const REQUEST_MOVIE_LIST = 'REQUEST_MOVIE_LIST';
 
@@ -38,10 +32,8 @@ export {
     REQUEST_MOVIE_SEARCH,
     RESET_SEARCH_BAR,
     REQUEST_MORE_SEARCH_RESULTS,
-    NO_MORE_RESULTS,
     GET_MOVIE_LIST_SUCCESS,
     GET_MOVIE_LIST_ERROR,
     REQUEST_MOVIE_LIST,
     REQUEST_MORE_MOVIES,
-    SET_SCROLLER_VALUE
 };
