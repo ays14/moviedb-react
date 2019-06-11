@@ -72,7 +72,7 @@ const Image = styled.img`
  * @param {object} props props from the parent component
  */
 const Movie = props => {
-        const imageURL = 'http://image.tmdb.org/t/p/w200';
+        const imageURL = 'https://image.tmdb.org/t/p/w200';
         const videoURL = 'https://www.youtube.com/embed/';
         const {
             title, 
