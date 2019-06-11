@@ -32,7 +32,7 @@ const Title = styled.p`
  * @param {object} props props from the parent component
  */
 const MovieCard = props => {
-    const imageURL = 'http://image.tmdb.org/t/p/w185';
+    const imageURL = 'https://image.tmdb.org/t/p/w185';
     const {posterPath, id, title} = props;
     return (
         posterPath && (
