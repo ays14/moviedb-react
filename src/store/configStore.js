@@ -5,7 +5,9 @@ import { routerReducer } from 'react-router-redux';
 import getMovieDetails from './movieDetails/reducer';
 import movie from './searchMovie/reducer';
 
-const middlewareList =  applyMiddleware(thunk, createLogger());
+const middlewareList =  process.env.NODE_ENV === 'production' 
+    ? applyMiddleware(thunk)
+    : applyMiddleware(thunk, createLogger());
 
 // Reducer
 const appReducer = combineReducers({
