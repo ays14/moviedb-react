@@ -72,14 +72,24 @@ class SearchBarContainer extends React.Component {
      */
     handleObserver(entities) {
         const y = entities[0].boundingClientRect.y;
-        if (this.props.prev > y && !this.props.listExhausted) {
-            if (this.props.value) {
-                this.props.searchMovie(this.props.value, this.props.page);
+        const {
+            value,
+            prev,
+            listExhausted,
+            page,
+            list,
+            searchMovie,
+            getMovieList,
+            setScrollValue
+        } = this.props;
+        if (prev > y && !listExhausted) {
+            if (value) {
+                searchMovie(value, page);
             } else {
-                this.props.getMovieList(this.props.list);
+                getMovieList(list);
             }
         }
-        this.props.setScrollValue(y);
+        setScrollValue(y);
     }
 
 
@@ -90,43 +100,62 @@ class SearchBarContainer extends React.Component {
      * @memberof SearchBarContainer
      */
     handleSearchChange(val) {
+        const {
+            list,
+            page,
+            resetSearch,
+            getMovieList,
+            searchMovie
+        } = this.props;
         if (val.length < 1) {
-            this.props.resetSearch();
-            this.props.getMovieList(this.props.list);
+            resetSearch();
+            getMovieList(list);
         } else {
-            this.props.searchMovie(val, this.props.page)
+            searchMovie(val, page)
             .then(() => this.observer.observe(this.loadingRef.current));
         }
     }
     
 	render() {
+        const {
+            value,
+            results,
+            isLoading,
+            listExhausted
+        } = this.props;
 		return (
 			<Fragment>
 				<SearchQuery
-					searchString={this.props.value}
+					searchString={value}
                     onSearchChange={this.handleSearchChange}   
-				/>
-                
-				{/* {this.props.value && ( */}
-                    <Fragment>
-                        <SearchResults 
-                            results={this.props.results}
-                            loading={this.props.isLoading}
-                            exhausted={this.props.listExhausted}
-                        />
-                        {!this.props.listExhausted && (
-                            <LoaderWrapper ref={this.loadingRef} >
-                                <Loader />
-                            </LoaderWrapper>
-                        )}
-                    </Fragment>
-                {/* )} */}
-			</Fragment>
+                />
+                <SearchResults 
+                    results={results}
+                    loading={isLoading}
+                    exhausted={listExhausted}
+                />
+                {!listExhausted && (
+                    <LoaderWrapper ref={this.loadingRef} >
+                        <Loader />
+                    </LoaderWrapper>
+                )}
+            </Fragment>
 		)
 	}
 }
 
-const mapStateToProps = ({movie: {isLoading, page, list, results, prev, listExhausted, value, error}}) => {
+const mapStateToProps = ({
+        movie: {
+            isLoading,
+            page,
+            list,
+            results,
+            prev,
+            listExhausted,
+            value,
+            error
+        }
+    }) => {
     return {
         isLoading,
         page,
