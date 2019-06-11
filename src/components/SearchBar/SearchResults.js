@@ -81,13 +81,14 @@ class SearchBarResults extends React.Component {
                         ))}
                     </SearchResults>
                 </SearchResultsDiv>
-                {this.props.loading && <Loader />}
-                <MessageDiv>
-                    {(this.props.page === this.props.totalPages ||
-                        this.props.results.length > 0) && (
-                        <Message>No search results to show</Message>
-                    )}
-                </MessageDiv>
+                {this.props.loading ? <Loader /> : (
+                    <MessageDiv>
+                        {(this.props.page === this.props.totalPages ||
+                            this.props.results.length > 0) && (
+                                <Message>No search results to show</Message>
+                            )}
+                    </MessageDiv>
+                )}
             </Content>
         );
     }
