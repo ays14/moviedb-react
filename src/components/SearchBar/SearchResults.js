@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import MovieCard from '../MovieCard';
+import MovieCard from './MovieCard';
 
 const Content = styled.div`
 	text-align: center;
