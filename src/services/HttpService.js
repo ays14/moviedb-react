@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { apiKey}  from '../config';
+import { apiKey, baseURL }  from '../config';
 
 // Create axios instance
 const Axios = axios.create({
-    baseURL: "https://api.themoviedb.org/3",
+    baseURL,
     params: {
         api_key: apiKey
     },

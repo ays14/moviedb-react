@@ -5,9 +5,11 @@ import { routerReducer } from 'react-router-redux';
 import getMovieDetails from './movieDetails/reducer';
 import movie from './searchMovie/reducer';
 
-const middlewareList =  process.env.NODE_ENV === 'production' 
+const middlewareList = process.env.NODE_ENV === 'production' 
     ? applyMiddleware(thunk)
     : applyMiddleware(thunk, createLogger());
+
+const devTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
 
 // Reducer
 const appReducer = combineReducers({
@@ -26,9 +28,10 @@ const rootReducer = (state, action) => {
     return appReducer(state, action);
 }
 
-// Create Store with enabled redux devTools
-const configStore = (initialState) => createStore(rootReducer, compose(middlewareList,
-    window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__())
-);
+// Create Store with enabled redux devTools but not in production
+const configStore = (initialState) => (
+    process.env.NODE_ENV === 'production'
+        ? createStore(rootReducer, middlewareList)
+        : createStore(rootReducer, compose(middlewareList, devTools)));
 
 export default configStore;
